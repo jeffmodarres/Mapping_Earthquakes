@@ -1,7 +1,7 @@
 // Add console.log to check to see if our code is working.
 console.log("working");
 
-let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/light-v10/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
 attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
     accessToken: API_KEY
@@ -21,7 +21,7 @@ let baseMaps = {
 // Create the map object with center and zoom level.
 let map = L.map('mapid', {
     center: [44,-80],
-    zoom: 4,
+    zoom: 14,
     layers: [streets]
 })
 // Add GeoJSON data.
@@ -38,7 +38,7 @@ L.geoJSON(data , {
 style :myStyle,
 onEachFeature: function(feature, layer) {
           console.log(feature);
-          return layer.bindPopup("<h2>" + feature.properties.airline + "</h2> <hr> <h4>" +feature.properties.dst + "</h4> ");
+          return layer.bindPopup("<h2>" + feature.properties.AREA_NAME + "</h2> <hr> <h4>" +feature.properties.AREA_S_CD + "</h4> ");
 }}).addTo(map);
 })
 
