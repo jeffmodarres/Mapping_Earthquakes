@@ -32,6 +32,14 @@ let map = L.map('mapid', {
     zoom: 3,
     layers: [streets]
 })
+
+// Create the earthquake layer for our map.
+let earthquakes = new L.layerGroup();
+// We define an object that contains the overlays.
+// This overlay will be visible all the time.
+let overlays = {
+    Earthquakes: earthquakes
+  };
 // Add GeoJSON data.
 
 // Create a style for the lines.
@@ -47,6 +55,7 @@ function getRadius(magnitude) {
   }
   return magnitude * 4;
 }
+
 function getColor(magnitude) {
   if (magnitude > 5) {
     return "#ea2c2c";
@@ -70,9 +79,9 @@ function getColor(magnitude) {
 // to calculate the radius.
 function styleInfo(feature) {
   return {
-    opacity: 1,
-    fillOpacity: 1,
-    fillColor: "red",
+    opacity: 0.5,
+    fillOpacity: 0.5,
+    fillColor: getColor(feature.properties.mag),
     color: getColor(feature.properties.mag),
     radius: getRadius(feature.properties.mag),
     stroke: true,
@@ -92,8 +101,12 @@ L.geoJSON(data, {
               // console.log(data);
               return L.circleMarker(latlng);
           },
+          onEachFeature: function(feature, layer) {
+            layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place);
+          },
           style :styleInfo,
-      }).addTo(map);
+      }).addTo(earthquakes);
+      earthquakes.addTo(map);
   });
 // L.geoJSON(data , {
 // style :myStyle,
@@ -165,7 +178,7 @@ L.geoJSON(data, {
 // We create the tile layer that will be the background of our map.
 
 
-  L.control.layers(baseMaps).addTo(map);
+  L.control.layers(baseMaps,overlays).addTo(map);
 
 // Then we add our 'graymap' tile layer to the map.
 // streets.addTo(map);

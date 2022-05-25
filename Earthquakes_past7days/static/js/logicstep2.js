@@ -47,6 +47,7 @@ function getRadius(magnitude) {
   }
   return magnitude * 4;
 }
+
 function getColor(magnitude) {
   if (magnitude > 5) {
     return "#ea2c2c";
@@ -70,9 +71,9 @@ function getColor(magnitude) {
 // to calculate the radius.
 function styleInfo(feature) {
   return {
-    opacity: 1,
-    fillOpacity: 1,
-    fillColor: "red",
+    opacity: 0.5,
+    fillOpacity: 0.5,
+    fillColor: getColor(feature.properties.mag),
     color: getColor(feature.properties.mag),
     radius: getRadius(feature.properties.mag),
     stroke: true,
@@ -91,6 +92,9 @@ L.geoJSON(data, {
   pointToLayer: function(feature, latlng) {
               // console.log(data);
               return L.circleMarker(latlng);
+          },
+          onEachFeature: function(feature, layer) {
+            layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place);
           },
           style :styleInfo,
       }).addTo(map);

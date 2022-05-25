@@ -32,6 +32,19 @@ let map = L.map('mapid', {
     zoom: 3,
     layers: [streets]
 })
+
+// Create the earthquake layer for our map.
+let earthquakes = new L.layerGroup();
+let overlayNames = new L.layerGroup();
+// We define an object that contains the overlays.
+// This overlay will be visible all the time.
+let overlays = {
+    Earthquakes: earthquakes,
+    Info: earthquakes
+  };
+
+  // Looping through our intervals to generate a label with a colored square for each interval.
+ 
 // Add GeoJSON data.
 
 // Create a style for the lines.
@@ -47,6 +60,7 @@ function getRadius(magnitude) {
   }
   return magnitude * 4;
 }
+
 function getColor(magnitude) {
   if (magnitude > 5) {
     return "#ea2c2c";
@@ -65,14 +79,45 @@ function getColor(magnitude) {
   }
   return "#98ee00";
 }
+
+const magnitudes = [0, 1, 2, 3, 4, 5];
+const colors = [
+  "#98ee00",
+  "#d4ee00",
+  "#eecc00",
+  "#ee9c00",
+  "#ea822c",
+  "#ea2c2c"
+];
+// Create a legend control object.
+let legend = L.control({
+    position: "bottomright"
+  });
+
+  // Then add all the details for the legend.
+legend.onAdd = function() {
+    let div = L.DomUtil.create("div", "info legend");
+
+for (var i = 0; i < magnitudes.length; i++) {
+    console.log(colors[i]);
+    div.innerHTML +=
+        "<i style='background: " + colors[i] + "'></i> " +
+        magnitudes[i] + (magnitudes[i + 1] ? "&ndash;" + magnitudes[i + 1] + "<br>" : "+");
+    }
+    return div;
+// };
+
+};
+
+legend.addTo(map);
 // This function returns the style data for each of the earthquakes we plot on
 // the map. We pass the magnitude of the earthquake into a function
 // to calculate the radius.
 function styleInfo(feature) {
   return {
-    opacity: 1,
-    fillOpacity: 1,
-    fillColor: "red",
+    opacity: 0.5,
+    fillOpacity: 0.5,
+    fillColor: getColor(feature.properties.mag),
     color: getColor(feature.properties.mag),
     radius: getRadius(feature.properties.mag),
     stroke: true,
@@ -92,9 +137,14 @@ L.geoJSON(data, {
               // console.log(data);
               return L.circleMarker(latlng);
           },
-          style :styleInfo,
-      }).addTo(map);
+          onEachFeature: function(feature, layer) {
+            layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place);
+          },
+          style : feature => styleInfo(feature),
+      }).addTo(earthquakes);
+      earthquakes.addTo(map);
   });
+  
 // L.geoJSON(data , {
 // style :myStyle,
 // onEachFeature: function(feature, layer) {
@@ -165,7 +215,7 @@ L.geoJSON(data, {
 // We create the tile layer that will be the background of our map.
 
 
-  L.control.layers(baseMaps).addTo(map);
+  L.control.layers(baseMaps,overlays).addTo(map);
 
 // Then we add our 'graymap' tile layer to the map.
 // streets.addTo(map);
