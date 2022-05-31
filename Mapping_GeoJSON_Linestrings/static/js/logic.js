@@ -32,7 +32,7 @@ let myStyle = {
   weight: 5
 }
 
-d3.json('torontoNeighborhoods.json').then(function(data) {
+d3.json('./torontoRoutes.json').then(function(data) {
 // console.log(data);
 L.geoJSON(data , {
 style :myStyle,
