@@ -20,18 +20,25 @@ let baseMaps = {
 
 // Create the map object with center and zoom level.
 let map = L.map('mapid', {
-    center: [30, 30],
+    center: [44,-80],
     zoom: 4,
     layers: [streets]
 })
 // Add GeoJSON data.
 
-d3.json('./majorAirports.json').then(function(data) {
+// Create a style for the lines.
+let myStyle = {
+  color: "#ffffa1",
+  weight: 5
+}
+
+d3.json('torontoNeighborhoods.json').then(function(data) {
 // console.log(data);
 L.geoJSON(data , {
+style :myStyle,
 onEachFeature: function(feature, layer) {
           console.log(feature);
-          return layer.bindPopup("<h2>" + feature.properties.city + "</h2> <hr> <h4>" +feature.properties.name + "</h4> ");
+          return layer.bindPopup("<h2>" + feature.properties.airline + "</h2> <hr> <h4>" +feature.properties.dst + "</h4> ");
 }}).addTo(map);
 })
 
